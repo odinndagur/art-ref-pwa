@@ -1,97 +1,47 @@
 <template>
 
-<div class="subselector">
+<Suspense>
+  <HelloWorld></HelloWorld>
+</Suspense>
+<!-- <div class="subselector">
   <p v-for="sub in subs" :key="sub.name" :class="{'active-sub' : sub.active, 'inactive-sub' : !sub.active}" @click="changeActive(sub)">{{sub.name}}</p>
-</div>
-<div class="images">
-  <div class="sub" v-for="(arr,sub) in imgs" :key="sub">
-    <img v-for="img in imgs[sub]" :key="img" :src="img" alt="" rel="preload"/>
+</div> -->
+
+<!-- <div class="images">
+  <div class="sub" v-for="sub in fimgs" :key="sub.name">
+    <img v-for="img in sub.imgs" :key="img" :src="img" alt="" rel="preload"/>
   </div>
-</div>
+</div> -->
+
 
 </template>
 
 <script>
-// import { onMounted } from "vue";
+// import { onMounted, ref } from "vue";
+import HelloWorld from "./components/HelloWorld.vue";
+
 export default {
+  // async setup() {
+  //   const data = ref(null);
+  //   onMounted(() => console.log("mounted"));
+  //   data.value = await this.startLoader();
+  //   return data;
+  // },
   name: 'App',
   components: {
-
-  },
+    HelloWorld,
+},
   data(){
     return {
-      sub: 'gonewild',
-      // subs: ['gonewild','gwcouples'],
-      subs: [
-          {
-            name:'nsfwfunny',
-            active: true
-          },
-          {
-            name:'bondageblowjobs',
-            active:true
-          },
-          {
-            name:'gonewild',
-            active: true
-          },
-          {
-            name:'gwcouples',
-            active:true
-          },
-          {
-            name:'distension',
-            active: true
-          },
-          {
-            name:'sexy',
-            active:true
-          },
-          {
-            name:'nsfwart',
-            active: true
-          },
-          {
-            name:'xsome',
-            active:true
-          },
-        ],
-      // sub: 'natureporn',
-      urlbase: 'https://www.reddit.com/r/',
-      urlend: '/.json',
-      imgs: {},
     }
   },
   methods: {
-    async loadImages(){
-      let url = this.urlbase + this.sub + this.urlend;
-      url = this.urlbase + '+';
-      this.subs.forEach((sub,index) => {
-        url = url + sub.name;
-        if(index < this.subs.length){
-          url = url + '+'
-        }
-      })
-      url = url + this.urlend;
-      fetch(url).then(res => res.json()).then(d =>{
-        d.data.children.forEach(c=>{
-          if(this.imgs[c.data.subreddit] == undefined){
-              this.imgs[c.data.subreddit] = [];
-            }
-            this.imgs[c.data.subreddit].push(c.data.url);
-          console.log(c.data.url);
-        })
-      })
-      console.log(this.imgs);
-    },
-    changeActive(sub){
-      sub.active = !sub.active;
-      console.log(sub, sub.active)
-    }
   },
   created(){
-    console.log('created');
-    this.loadImages();
+    
+  },
+  computed: {
+    
   },
 }
 </script>
@@ -123,5 +73,15 @@ html, body {
 
 img {
   width: 400px;
+}
+
+.inactive-sub {
+  color:gray;
+  font-style:italic;
+}
+
+.active-sub {
+  color: black;
+  font-style: bold;
 }
 </style>

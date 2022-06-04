@@ -1,58 +1,156 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+
+<div class="subselector">
+  <p v-for="sub in subs" :key="sub.name" :class="{'active-sub' : sub.active, 'inactive-sub' : !sub.active}" @click="changeActive(sub)">{{sub.name}}</p>
+</div>
+
+<div class="images">
+  <div class="sub" v-for="sub in fimgs" :key="sub.name">
+    <img v-for="img in sub.imgs" :key="img" :src="img" alt="" rel="preload"/>
   </div>
+</div>
+
+
 </template>
 
 <script>
+// import { ref } from "vue";
+
 export default {
+  // async setup() {
+  //   const data = ref(null);
+  //   await this.startLoader();
+  //   return data;
+  // },
   name: 'HelloWorld',
-  props: {
-    msg: String
-  }
+  data(){
+    return {
+      subs: [
+          {
+            name:'nsfwfunny',
+            active: true,
+            imgs: [],
+          },
+          {
+            name:'bondageblowjobs',
+            active:true,
+            imgs: [],
+          },
+          {
+            name:'gonewild',
+            active: true,
+            imgs: [],
+          },
+          {
+            name:'gwcouples',
+            active:false,
+            imgs: [],
+          },
+          {
+            name:'distension',
+            active: false,
+            imgs: [],
+          },
+          {
+            name:'sexy',
+            active:true,
+            imgs: [],
+          },
+          {
+            name:'nsfwart',
+            active: false,
+            imgs: [],
+          },
+          {
+            name:'xsome',
+            active:false,
+            imgs: [],
+          },
+          {
+            name:'mansex',
+            active:true,
+            imgs: [],
+          },
+        ],
+      urlbase: 'https://www.reddit.com/r/',
+      urlend: '/.json',
+    }
+  },
+  methods: {
+    async startLoader(){
+      this.subs.forEach(async sub => {
+        this.loadImagesFromSub(sub.name).then(s => {
+          sub.imgs = s;
+          console.log(s);
+        })
+      })
+    },
+    async loadImagesFromSub(sub){
+      let url = this.urlbase + sub + this.urlend;
+      let subImgs = [];
+      fetch(url).then(res => res.json()).then(d =>{
+        d.data.children.forEach(c=>{
+          subImgs.push(c.data.url);
+        })
+      })
+      return subImgs;
+    },
+    changeActive(sub){
+      sub.active = !sub.active;
+      console.log(sub, sub.active)
+    }
+  },
+  created(){
+    console.log('created');
+    // this.loadImages();
+    this.startLoader();
+  },
+  computed: {
+    fimgs(){
+      return this.subs.filter(sub => {
+        return sub.active
+      })
+    },
+  },
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
+<style>
+html, body {
+  width: 70vw;
+  margin: auto;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.images {
+  width: 50vw;
+  float:right;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+.subselector {
+  width:20vw;
+  float:left;
 }
-a {
-  color: #42b983;
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+
+img {
+  width: 400px;
+}
+
+.inactive-sub {
+  color:gray;
+  font-style:italic;
+}
+
+.active-sub {
+  color: black;
+  font-style: bold;
 }
 </style>
