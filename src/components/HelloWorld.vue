@@ -1,12 +1,18 @@
 <template>
 
 <div class="subselector">
-  <p v-for="sub in subs" :key="sub.name" :class="{'active-sub' : sub.active, 'inactive-sub' : !sub.active}" @click="changeActive(sub)">{{sub.name}}</p>
+  <p v-for="sub in subs" :key="sub.name" style="display:block;">
+    <span :class="{'active-sub' : sub.active, 'inactive-sub' : !sub.active}" @click="solo(sub)">s </span>
+    <span :class="{'active-sub' : sub.active, 'inactive-sub' : !sub.active}" @click="changeActive(sub)">
+      {{sub.name}}
+    </span>
+  </p>
+
 </div>
 
 <div class="images">
   <div class="sub" v-for="sub in fimgs" :key="sub.name">
-    <img v-for="img in sub.imgs" :key="img" :src="img" alt="" rel="preload"/>
+    <img v-for="img in sub.imgs" :key="img" :src="img" alt="" rel="preload" :v-if="loaded"/>
   </div>
 </div>
 
@@ -14,7 +20,7 @@
 </template>
 
 <script>
-// import { ref } from "vue";
+import { ref } from "vue";
 
 export default {
   // async setup() {
@@ -25,7 +31,13 @@ export default {
   name: 'HelloWorld',
   data(){
     return {
+      loaded: false,
       subs: [
+          {
+            name:'mombods',
+            active: true,
+            imgs: [],
+          },          
           {
             name:'nsfwfunny',
             active: true,
@@ -84,6 +96,7 @@ export default {
           console.log(s);
         })
       })
+      return true;
     },
     async loadImagesFromSub(sub){
       let url = this.urlbase + sub + this.urlend;
@@ -98,12 +111,21 @@ export default {
     changeActive(sub){
       sub.active = !sub.active;
       console.log(sub, sub.active)
+    },
+    solo(sub){
+      this.subs.forEach(s => {
+        s.active = false;
+      })
+      sub.active = true;
     }
   },
-  created(){
-    console.log('created');
+  async mounted(){
+    console.log('mounted');
+    const data = ref(null);
     // this.loadImages();
-    this.startLoader();
+    await this.startLoader();
+    this.changeActive(this.subs[0])
+    return data;
   },
   computed: {
     fimgs(){
@@ -116,10 +138,7 @@ export default {
 </script>
 
 <style>
-html, body {
-  width: 70vw;
-  margin: auto;
-}
+
 
 .images {
   width: 50vw;
@@ -128,7 +147,10 @@ html, body {
 
 .subselector {
   width:20vw;
-  float:left;
+  /* float:left; */
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
 }
 
 #app {
