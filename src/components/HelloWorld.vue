@@ -102,6 +102,7 @@ export default {
       let url = this.urlbase + sub + this.urlend;
       let subImgs = [];
       fetch(url).then(res => res.json()).then(d =>{
+        if(!d.data){return}
         d.data.children.forEach(c=>{
           subImgs.push(c.data.url);
         })
