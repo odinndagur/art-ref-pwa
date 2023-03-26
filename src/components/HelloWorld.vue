@@ -34,7 +34,7 @@ export default {
       loaded: false,
       subs: [
           {
-            name:'mombods',
+            name:'mombod',
             active: true,
             imgs: [],
           },          
